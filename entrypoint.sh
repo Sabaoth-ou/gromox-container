@@ -74,20 +74,11 @@ unset REPO_PATH
 
 get_features
 
-set_repo() {
-
-  writelog "Dialog: repository"
-  dialog --no-mouse --colors --backtitle "grommunio Setup" --title "Repository configuration" --ok-label "Submit" \
-         --form "\nIf you have a subscription, enter your credentials here.\n\nLeave empty for community (unsupported) repositories." 0 0 0 \
-  "Subscription username:    " 1 1 "${REPO_USER}"         1 25 25 0 \
-  "Subscription password:    " 2 1 "${REPO_PASS}"         2 25 25 0 2>"${TMPF}"
-  dialog_exit $?
-
-}
 
 set_repo
-REPO_USER=$(sed -n '1{p;q}' "${TMPF}")
-REPO_PASS=$(sed -n '2{p;q}' "${TMPF}")
+# Set repository credentials directly
+REPO_USER="your_repo_user"
+REPO_PASS="your_repo_password"
 writelog "Installation / update of packages"
 # shellcheck source=common/repo
 PACKAGES="gromox grommunio-admin-api grommunio-admin-web grommunio-antispam \
