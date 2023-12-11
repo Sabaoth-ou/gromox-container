@@ -72,14 +72,9 @@ unset REPO_USER
 unset REPO_PASS
 unset REPO_PATH
 
-get_features
-
-
-set_repo
 # Set repository credentials directly
 REPO_USER="your_repo_user"
 REPO_PASS="your_repo_password"
-writelog "Installation / update of packages"
 # shellcheck source=common/repo
 PACKAGES="gromox grommunio-admin-api grommunio-admin-web grommunio-antispam \
   grommunio-common grommunio-web grommunio-sync grommunio-dav \
@@ -87,11 +82,6 @@ PACKAGES="gromox grommunio-admin-api grommunio-admin-web grommunio-antispam \
 PACKAGES="$PACKAGES $FT_PACKAGES"
 . "${DATADIR}/common/repo"
 setup_repo
-
-chmod +x scripts/mysql.sh
-sh mysql.sh
-
-dialog_adminpass
 
 set_fqdn()
 
