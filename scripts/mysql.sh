@@ -7,8 +7,8 @@ CHAT_ADMIN_PASS=
 FILES_ADMIN_PASS=
 ADMIN_PASS=
 
-CHAT_MYSQL_HOST=
-CHAT_MYSQL_USER=
+CHAT_MYSQL_HOST=$(sed -n '1{p;q}' "${TMPF}")
+CHAT_MYSQL_USER=$(sed -n '2{p;q}' "${TMPF}")
 CHAT_MYSQL_PASS=$(sed -n '3{p;q}' "${TMPF}")
 CHAT_MYSQL_DB=$(sed -n '4{p;q}' "${TMPF}")
 
