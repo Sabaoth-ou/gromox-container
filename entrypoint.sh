@@ -82,10 +82,8 @@ PACKAGES="$PACKAGES $FT_PACKAGES"
 . "${DATADIR}/common/repo"
 setup_repo
 
-set_fqdn()
-
-ORIGFQDN=$(set_fqdn)
-FQDN="${ORIGFQDN,,}"
+ORIGFQDN="localhost"
+FQDN="${ORIGFQDN}"
 
 
 set_maildomain(){
