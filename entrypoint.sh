@@ -16,10 +16,8 @@ if ! test -e "$LOGFILE"; then
 	true >"$LOGFILE"
 	chmod 0600 "$LOGFILE"
 fi
-# shellcheck source=common/helpers
-. "${DATADIR}/common/helpers"
 # shellcheck source=common/dialogs
-. "${DATADIR}/common/dialogs"
+. "${DATADIR}/common/install-option"
 TMPF=$(mktemp /tmp/grommunio-setup.XXXXXXXX)
 
 memory_check()
