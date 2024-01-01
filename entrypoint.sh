@@ -74,6 +74,7 @@ unset REPO_PATH
 REPO_USER="your_repo_user"
 REPO_PASS="your_repo_password"
 # shellcheck source=common/repo
+INSTALL-VALUE= "core, office, archive, meet"
 PACKAGES="gromox grommunio-admin-api grommunio-admin-web grommunio-antispam \
   grommunio-common grommunio-web grommunio-sync grommunio-dav \
   mariadb php-fpm cyrus-sasl-saslauthd cyrus-sasl-plain postfix jq"
