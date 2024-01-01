@@ -47,6 +47,7 @@ networks:
            gateway: 17.18.0.1 
 
 volumes:
+  mysql_data:
   opensuse-data:
     driver: local
     driver_opts:
