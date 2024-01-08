@@ -162,7 +162,7 @@ if [ "$FT_CHAT" == "true" ] ; then
 
   if [ "${SSL_INSTALL_TYPE}" = "0" ] || [ "${SSL_INSTALL_TYPE}" = "1" ] ; then
 
-cp config/chat.yaml /etc/grommunio-admin-api/conf.d/chat.yaml
+cp /home/config/chat.yaml /etc/grommunio-admin-api/conf.d/chat.yaml
 
   fi
 
@@ -183,7 +183,7 @@ if [ "$FT_MEET" == "true" ] ; then
 fi
 
 progress 0
-zypper install -y mariadb php-fpm cyrus-sasl-saslauthd cyrus-sasl-plain postfix postfix-mysql >>"${LOGFILE}" 2>&1
+zypper install -y mariadb vim php-fpm cyrus-sasl-saslauthd cyrus-sasl-plain postfix postfix-mysql >>"${LOGFILE}" 2>&1
 
 progress 10
 systemctl enable redis@grommunio.service gromox-delivery.service gromox-event.service \
@@ -216,7 +216,7 @@ setconf /etc/gromox/smtp.cfg listen_port 24
 writelog "Config stage: pam config"
 progress 30
 cp /etc/pam.d/smtp /etc/pam.d/smtp.save
-cp config/smtp /etc/pam.d/smtp
+cp /home/config/smtp /etc/pam.d/smtp
 
 writelog "Config stage: database creation"
 progress 40
@@ -235,12 +235,12 @@ cp -f /etc/gromox/mysql_adaptor.cfg /etc/gromox/adaptor.cfg >>"${LOGFILE}" 2>&1
 
 writelog "Config stage: autodiscover configuration"
 progress 50
-cp config/autodiscover.ini /etc/gromox/autodiscover.ini 
+cp /home/config/autodiscover.ini /etc/gromox/autodiscover.ini 
 
 writelog "Config stage: database initialization"
 gromox-dbop -C >>"${LOGFILE}" 2>&1
 
-cp config/database.yaml /etc/grommunio-admin-api/conf.d/database.yaml
+cp /home/config/database.yaml /etc/grommunio-admin-api/conf.d/database.yaml
 
 writelog "Config stage: admin password set"
 progress 60
@@ -262,7 +262,7 @@ setconf /etc/gromox/pop3.cfg listen_ssl_port 995
 setconf /etc/gromox/pop3.cfg pop3_certificate_path "${SSL_BUNDLE_T}"
 setconf /etc/gromox/pop3.cfg pop3_private_key_path "${SSL_KEY_T}"
 
-cp config/certificate.conf /etc/grommunio-common/nginx/ssl_certificate.conf 
+cp /home/config/certificate.conf /etc/grommunio-common/nginx/ssl_certificate.conf 
 ln -s /etc/grommunio-common/nginx/ssl_certificate.conf /etc/grommunio-admin-common/nginx-ssl.conf
 chown gromox:gromox /etc/grommunio-common/ssl/*
 
@@ -278,12 +278,12 @@ done
 writelog "Config stage: postfix configuration"
 progress 80
 
-cp config/mailbox/virtual-mailbox-domain.cf /etc/postfix/grommunio-virtual-mailbox-domains.cf 
+cp /home/config/mailbox/virtual-mailbox-domain.cf /etc/postfix/grommunio-virtual-mailbox-domains.cf 
 
-cp config/mailbox/virtual-mailbox-alias-maps.cf /etc/postfix/grommunio-virtual-mailbox-alias-maps.cf 
+cp /home/config/mailbox/virtual-mailbox-alias-maps.cf /etc/postfix/grommunio-virtual-mailbox-alias-maps.cf 
 
-cp config/mailbox/virtual-mailbox-maps.cf /etc/postfix/grommunio-virtual-mailbox-maps.cf 
-sh scripts/postconf.sh
+cp /home/config/mailbox/virtual-mailbox-maps.cf /etc/postfix/grommunio-virtual-mailbox-maps.cf 
+sh /home/scripts/postconf.sh
 
 writelog "Config stage: postfix enable and restart"
 systemctl enable postfix.service >>"${LOGFILE}" 2>&1
@@ -293,7 +293,7 @@ systemctl enable grommunio-fetchmail.timer >>"${LOGFILE}" 2>&1
 systemctl start grommunio-fetchmail.timer >>"${LOGFILE}" 2>&1
 
 writelog "Config stage: open required firewall ports"
-sh scripts/firewall.sh
+sh /home/scripts/firewall.sh
 
 progress 90
 writelog "Config stage: restart all required services"
@@ -319,10 +319,10 @@ if [ "$FT_FILES" == "true" ] ; then
   fi
   dialog_files_adminpass
 
-cp config/config.php /usr/share/grommunio-files/config/config.php 
+cp /home/config/config.php /usr/share/grommunio-files/config/config.php 
 
-chmod +x pushd.sh
-sh pushd.sh
+chmod +x /home/scripts/pushd.sh
+sh /home/scripts/pushd.sh
 
   systemctl enable grommunio-files-cron.service >>"${LOGFILE}" 2>&1
   systemctl enable grommunio-files-cron.timer >>"${LOGFILE}" 2>&1
