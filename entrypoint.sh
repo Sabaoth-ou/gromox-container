@@ -125,8 +125,7 @@ RETCMD=1
 if [ "${SSL_INSTALL_TYPE}" = "0" ]; then
   clear
   if ! selfcert; then
-    dialog --no-mouse --clear --colors --backtitle "grommunio Setup" --title "TLS certificate (self-signed)" --msgbox "Certificate generation not successful. See ${LOGFILE}.\nContinue installation or press ESC to abort setup." 0 0
-    dialog_exit $?
+  fullca
   fi
 if [ "${SSL_INSTALL_TYPE}" = "2" ]; then
   choose_ssl_selfprovided
