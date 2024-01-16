@@ -107,6 +107,45 @@ RELAYHOST=$(get_relayhost)
 
 X500="i$(printf "%llx" "$(date +%s)")"
 
+choose_ssl_install_type
+SSL_INSTALL_TYPE=0
+
+SSL_COUNTRY="XX"
+SSL_STATE="XX"
+SSL_LOCALITY="X"
+SSL_ORG="grommunio Appliance"
+SSL_OU="IT"
+SSL_EMAIL="admin@${DOMAIN}"
+SSL_DAYS=30
+SSL_PASS=$(randpw)
+
+
+. "${DATADIR}/common/ssl_setup"
+RETCMD=1
+if [ "${SSL_INSTALL_TYPE}" = "0" ]; then
+  clear
+  if ! selfcert; then
+    dialog --no-mouse --clear --colors --backtitle "grommunio Setup" --title "TLS certificate (self-signed)" --msgbox "Certificate generation not successful. See ${LOGFILE}.\nContinue installation or press ESC to abort setup." 0 0
+    dialog_exit $?
+  fi
+if [ "${SSL_INSTALL_TYPE}" = "2" ]; then
+  choose_ssl_selfprovided
+  SSL_BUNDLE=/home/ssl/grommox.pem
+  SSL_KEY=/home/ssl/grommox.pem
+  while [ ${RETCMD} -ne 0 ]; do
+    owncert
+    RETCMD=$?
+  don
+elif [ "${SSL_INSTALL_TYPE}" = "3" ]; then
+  choose_ssl_letsencrypt
+  #this should containe the domain to signed by certbot
+  SSL_DOMAINS=$FQDN
+
+  #This should contain the email
+  SSL_EMAIL=email@$FQDN
+  letsencrypt
+fi
+
 [ -e "/etc/grommunio-common/ssl" ] || mkdir -p "/etc/grommunio-common/ssl"
 
 # Configure config.json of admin-web
