@@ -3,7 +3,7 @@
 # SPDX-FileCopyrightText: 2021 grommunio GmbH
 # Interactive grommunio setup
 
-DATADIR="${0%/*}"
+DATADIR=/home
 if [ "${DATADIR}" = "$0" ]; then
 	DATADIR="/usr/share/grommunio-setup"
 else
@@ -120,7 +120,7 @@ SSL_DAYS=30
 SSL_PASS=$(randpw)
 
 
-. "${DATADIR}/common/ssl_setup"
+. "/home/common/ssl_setup"
 RETCMD=1
 if [ "${SSL_INSTALL_TYPE}" = "0" ]; then
   clear
