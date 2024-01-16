@@ -120,7 +120,22 @@ SSL_DAYS=30
 SSL_PASS=$(randpw)
 
 
-. "/home/common/ssl_setup"
+SSL_BUNDLE_T="/etc/grommunio-common/ssl/server-bundle.pem"
+SSL_KEY_T="/etc/grommunio-common/ssl/server.key"
+export SSL_COUNTRY SSL_STATE SSL_LOCALITY SSL_ORG SSL_OU SSL_EMAIL SSL_PASS SSL_DAYS
+export FQDN DOMAIN SSL_BUNDLE_T SSL_KEY_T
+
+selfcert()
+{
+
+  openssl req -x509 -new -nodes -out "${SSL_BUNDLE_T}" -keyout "${SSL_KEY_T}" \
+          -subj "/CN=${FQDN}" -addext "subjectAltName = DNS:${FQDN}, DNS:autodiscover.${DOMAIN}" >>"${LOGFILE}" 2>&1
+
+  cp -f "${SSL_BUNDLE_T}" "/etc/pki/trust/anchors/"
+  update-ca-certificates
+
+}
+
 RETCMD=1
 if [ "${SSL_INSTALL_TYPE}" = "0" ]; then
   selfcert

@@ -8,8 +8,6 @@ SSL_KEY_T="/etc/grommunio-common/ssl/server.key"
 selfcert()
 {
 
-  echo "Using CN=${FQDN}, SAN=DNS:${FQDN},DNS:autodiscover.${DOMAIN}" >>"${LOGFILE}" 2>&1
-
   openssl req -x509 -new -nodes -out "${SSL_BUNDLE_T}" -keyout "${SSL_KEY_T}" \
           -subj "/CN=${FQDN}" -addext "subjectAltName = DNS:${FQDN}, DNS:autodiscover.${DOMAIN}" >>"${LOGFILE}" 2>&1
 
