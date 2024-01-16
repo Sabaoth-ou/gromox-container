@@ -123,8 +123,7 @@ SSL_PASS=$(randpw)
 . "/home/common/ssl_setup"
 RETCMD=1
 if [ "${SSL_INSTALL_TYPE}" = "0" ]; then
-  clear
-  if ! selfcert; then
+  selfcert
   fullca
   fi
 if [ "${SSL_INSTALL_TYPE}" = "2" ]; then
