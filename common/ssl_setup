@@ -10,33 +10,6 @@ selfcert()
 
   echo "Using CN=${FQDN}, SAN=DNS:${FQDN},DNS:autodiscover.${DOMAIN}" >>"${LOGFILE}" 2>&1
 
-  SELFCERT_MSG="\
-(Scroll this dialog with the 'j' and 'k' keys)
-
-The certificate validity period starts at $(date).
-If any of the clocks of this host, or the client, is inaccurate, the certificate may be flagged for that.
-
-When creating the profile, Outlook will present a dialog similar to:
-
-   ┌──
-     X  The security certificate was issued by a
-        company you have not chosen to trust.
-    ok  The security certificate date is valid
-    ok  The security certificate has a valid name
-
-    Do you want to proceed? [Yes/No/View Certificate]
-                                                    ──┘
-
-On that dialog, you must choose \"View Certificate\" and explicitly install the self-signed certificate to use it succesfully."
-
-  dialog --no-mouse --colors --cr-wrap --clear \
-    --backtitle "grommunio Setup" \
-    --title "TLS certificate (self-signed)" \
-    --yes-label "Continue" \
-    --no-label "Cancel" \
-    --yesno "${SELFCERT_MSG}" 0 0
-  dialog_exit $?
-
   openssl req -x509 -new -nodes -out "${SSL_BUNDLE_T}" -keyout "${SSL_KEY_T}" \
           -subj "/CN=${FQDN}" -addext "subjectAltName = DNS:${FQDN}, DNS:autodiscover.${DOMAIN}" >>"${LOGFILE}" 2>&1
 
@@ -94,14 +67,6 @@ letsencrypt() {
     --cert-name="${FQDN}" \
     -d "${SSL_DOMAINS}" \
     -m "${SSL_EMAIL}" >>"${LOGFILE}" 2>&1
-
-  if [ "$?" != "0" ]; then
-    dialog --no-mouse --colors --cr-wrap --clear --backtitle "grommunio Setup" \
-           --title "TLS certificate (Let's Encrypt)" \
-           --yes-label "OK" --no-label "Exit" --defaultno \
-           --yesno "It seems the Let's Encrypt certificate could not be generated correctly. Verify the generation of the certificate under /var/log/letsencrypt and re-run.\nThe command used to generate the certificates:\n\ncertbot certonly -n --standalone --agree-tos --preferred-challenges http --cert-name=\"${FQDN}\" -d \"${SSL_DOMAINS}\" -m \"${SSL_EMAIL}\"\n\nAlternatively, re-run grommunio-setup to run through the process again." 0 0
-    dialog_exit $?
-  fi
 
   progress 95
 
