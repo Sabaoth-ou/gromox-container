@@ -3,9 +3,9 @@
 # SPDX-FileCopyrightText: 2021 grommunio GmbH
 # Interactive grommunio setup
 
-DATADIR=/home
+DATADIR="${0%/*}"
 if [ "${DATADIR}" = "$0" ]; then
-	DATADIR="/usr/share/grommunio-setup"
+	DATADIR="/home"
 else
 	DATADIR="$(readlink -f "$0")"
 	DATADIR="${DATADIR%/*}"
@@ -119,7 +119,7 @@ SSL_DAYS=30
 SSL_PASS=grommunio
 
 . "/home/common/ssl_setup"
-selfcert
+mkdir /etc/grommunio-common/ssl
 RETCMD=1
 if [ "${SSL_INSTALL_TYPE}" = "0" ]; then
   clear
