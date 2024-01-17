@@ -106,8 +106,7 @@ done
 RELAYHOST=$(get_relayhost)
 
 X500="i$(printf "%llx" "$(date +%s)")"
-
-choose_ssl_install_type
+#Choose Install type, 0 for self signed, 2 to provide certificate and 3 for letsencrypt.
 SSL_INSTALL_TYPE=0
 
 SSL_COUNTRY="XX"
@@ -123,8 +122,7 @@ SSL_PASS=$(randpw)
 RETCMD=1
 if [ "${SSL_INSTALL_TYPE}" = "0" ]; then
   clear
-  if ! selfcert; then
-  fi
+  if ! selfcert;
 elif [ "${SSL_INSTALL_TYPE}" = "2" ]; then
   choose_ssl_selfprovided
   fullca
