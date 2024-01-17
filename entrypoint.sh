@@ -119,30 +119,17 @@ SSL_EMAIL="admin@${DOMAIN}"
 SSL_DAYS=30
 SSL_PASS=$(randpw)
 
-
-SSL_BUNDLE_T="/etc/grommunio-common/ssl/server-bundle.pem"
-SSL_KEY_T="/etc/grommunio-common/ssl/server.key"
-export SSL_COUNTRY SSL_STATE SSL_LOCALITY SSL_ORG SSL_OU SSL_EMAIL SSL_PASS SSL_DAYS
-export FQDN DOMAIN SSL_BUNDLE_T SSL_KEY_T
-
-selfcert()
-{
-
-  openssl req -x509 -new -nodes -out "${SSL_BUNDLE_T}" -keyout "${SSL_KEY_T}" \
-          -subj "/CN=${FQDN}" -addext "subjectAltName = DNS:${FQDN}, DNS:autodiscover.${DOMAIN}" >>"${LOGFILE}" 2>&1
-
-  cp -f "${SSL_BUNDLE_T}" "/etc/pki/trust/anchors/"
-  update-ca-certificates
-
-}
-
+. "/home/common/ssl_setup"
 RETCMD=1
 if [ "${SSL_INSTALL_TYPE}" = "0" ]; then
-  selfcert
-  fullca
+  clear
+  if ! selfcert; then
+    dialog --no-mouse --clear --colors --backtitle "grommunio Setup" --title "TLS certificate (self-signed)" --msgbox "Certificate generation not successful. See ${LOGFILE}.\nContinue installation or press ESC to abort setup." 0 0
+    dialog_exit $?
   fi
-if [ "${SSL_INSTALL_TYPE}" = "2" ]; then
+elif [ "${SSL_INSTALL_TYPE}" = "2" ]; then
   choose_ssl_selfprovided
+  fullca
   SSL_BUNDLE=/home/ssl/grommox.pem
   SSL_KEY=/home/ssl/grommox.pem
   while [ ${RETCMD} -ne 0 ]; do
