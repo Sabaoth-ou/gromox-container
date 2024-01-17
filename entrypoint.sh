@@ -116,9 +116,10 @@ SSL_ORG="grommunio Appliance"
 SSL_OU="IT"
 SSL_EMAIL="admin@${DOMAIN}"
 SSL_DAYS=30
-SSL_PASS=$(randpw)
+SSL_PASS=grommunio
 
 . "/home/common/ssl_setup"
+selfcert
 RETCMD=1
 if [ "${SSL_INSTALL_TYPE}" = "0" ]; then
   clear
