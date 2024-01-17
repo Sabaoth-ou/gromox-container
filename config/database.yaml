@@ -1,5 +1,5 @@
 DB:
-  host: '17.18.0.2'
-  user: 'grommunio'
+  host: 'localhost'
+  user: 'root'
   pass: 'Lu3s3WmFxXghtLwJnuqN'
   database: 'grommunio'

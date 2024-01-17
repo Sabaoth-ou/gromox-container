@@ -31,7 +31,6 @@ memory_check()
   if [ -z "${HAVE}" ] || [ "${HAVE}" -ge "${THRES}" ]; then
     return 0
   fi
-  writelog "Memory check"
   memory_notice $((HAVE/1024)) $((ASK/1024))
 
 }
@@ -124,7 +123,7 @@ RETCMD=1
 if [ "${SSL_INSTALL_TYPE}" = "0" ]; then
   clear
   if ! selfcert; then
-    selfcert
+
   fi
 elif [ "${SSL_INSTALL_TYPE}" = "2" ]; then
   choose_ssl_selfprovided
@@ -220,7 +219,6 @@ if [ "$FT_MEET" == "true" ] ; then
 
 fi
 
-progress 0
 zypper install -y mariadb vim php-fpm cyrus-sasl-saslauthd cyrus-sasl-plain postfix postfix-mysql >>"${LOGFILE}" 2>&1
 
 progress 10
@@ -229,10 +227,7 @@ systemctl enable redis@grommunio.service gromox-delivery.service gromox-event.se
   gromox-delivery-queue.service gromox-timer.service gromox-zcore.service grommunio-antispam.service \
   php-fpm.service nginx.service grommunio-admin-api.service saslauthd.service mariadb >>"${LOGFILE}" 2>&1
 
-progress 20
 systemctl start mariadb >>"${LOGFILE}" 2>&1
-
-writelog "Config stage: put php files into place"
 if [ -d /etc/php8 ]; then
   if [ -e "/etc/php8/fpm/php-fpm.conf.default" ] ; then
     mv /etc/php8/fpm/php-fpm.conf.default /etc/php8/fpm/php-fpm.conf
@@ -251,17 +246,12 @@ setconf /etc/gromox/http.cfg host_id ${FQDN}
 
 setconf /etc/gromox/smtp.cfg listen_port 24
 
-writelog "Config stage: pam config"
-progress 30
 cp /etc/pam.d/smtp /etc/pam.d/smtp.save
 cp /home/config/smtp /etc/pam.d/smtp
 
-writelog "Config stage: database creation"
-progress 40
 echo "create database grommunio; grant all on grommunio.* to 'grommunio'@'localhost' identified by '${MYSQL_PASS}';" | mysql
 echo "# Do not delete this file unless you know what you do!" > /etc/grommunio-common/setup_done
 
-writelog "Config stage: database configuration"
 setconf /etc/gromox/mysql_adaptor.cfg mysql_username "${MYSQL_USER}"
 setconf /etc/gromox/mysql_adaptor.cfg mysql_password "${MYSQL_PASS}"
 setconf /etc/gromox/mysql_adaptor.cfg mysql_dbname "${MYSQL_DB}"
@@ -271,22 +261,15 @@ fi
 
 cp -f /etc/gromox/mysql_adaptor.cfg /etc/gromox/adaptor.cfg >>"${LOGFILE}" 2>&1
 
-writelog "Config stage: autodiscover configuration"
-progress 50
 cp /home/config/autodiscover.ini /etc/gromox/autodiscover.ini 
-
-writelog "Config stage: database initialization"
 gromox-dbop -C >>"${LOGFILE}" 2>&1
 
 cp /home/config/database.yaml /etc/grommunio-admin-api/conf.d/database.yaml
 
-writelog "Config stage: admin password set"
-progress 60
 grommunio-admin passwd --password "${ADMIN_PASS}" >>"${LOGFILE}" 2>&1
 
 rspamadm pw -p "${ADMIN_PASS}" | sed -e 's#^#password = "#' -e 's#$#";#' > /etc/grommunio-antispam/local.d/worker-controller.inc
 
-writelog "Config stage: gromox tls configuration"
 setconf /etc/gromox/http.cfg http_certificate_path "${SSL_BUNDLE_T}"
 setconf /etc/gromox/http.cfg http_private_key_path "${SSL_KEY_T}"
 
@@ -305,16 +288,12 @@ ln -s /etc/grommunio-common/nginx/ssl_certificate.conf /etc/grommunio-admin-comm
 chown gromox:gromox /etc/grommunio-common/ssl/*
 
 # Domain and X500
-writelog "Config stage: gromox domain and x500 configuration"
 for SERVICE in http midb zcore imap pop3 smtp delivery ; do
   setconf /etc/gromox/${SERVICE}.cfg default_domain "${DOMAIN}"
 done
 for CFG in midb.cfg zcore.cfg exmdb_local.cfg exmdb_provider.cfg exchange_emsmdb.cfg exchange_nsp.cfg ; do
   setconf "/etc/gromox/${CFG}" x500_org_name "${X500}"
 done
-
-writelog "Config stage: postfix configuration"
-progress 80
 
 cp /home/config/mailbox/virtual-mailbox-domain.cf /etc/postfix/grommunio-virtual-mailbox-domains.cf 
 
@@ -323,18 +302,14 @@ cp /home/config/mailbox/virtual-mailbox-alias-maps.cf /etc/postfix/grommunio-vir
 cp /home/config/mailbox/virtual-mailbox-maps.cf /etc/postfix/grommunio-virtual-mailbox-maps.cf 
 sh /home/scripts/postconf.sh
 
-writelog "Config stage: postfix enable and restart"
 systemctl enable postfix.service >>"${LOGFILE}" 2>&1
 systemctl restart postfix.service >>"${LOGFILE}" 2>&1
 
 systemctl enable grommunio-fetchmail.timer >>"${LOGFILE}" 2>&1
 systemctl start grommunio-fetchmail.timer >>"${LOGFILE}" 2>&1
 
-writelog "Config stage: open required firewall ports"
 sh /home/scripts/firewall.sh
 
-progress 90
-writelog "Config stage: restart all required services"
 systemctl restart redis@grommunio.service nginx.service php-fpm.service gromox-delivery.service \
   gromox-event.service gromox-http.service gromox-imap.service gromox-midb.service \
   gromox-pop3.service gromox-delivery-queue.service gromox-timer.service gromox-zcore.service \
@@ -355,7 +330,6 @@ if [ "$FT_FILES" == "true" ] ; then
     echo "drop database if exists ${FILES_MYSQL_DB}; \
           create database ${FILES_MYSQL_DB};" | mysql -h"${FILES_MYSQL_HOST}" -u"${FILES_MYSQL_USER}" -p"${FILES_MYSQL_PASS}" "${FILES_MYSQL_DB}" >/dev/null 2>&1
   fi
-  dialog_files_adminpass
 
 cp /home/config/config.php /usr/share/grommunio-files/config/config.php 
 
@@ -372,7 +346,6 @@ sh /home/scripts/pushd.sh
 fi
 
 if [ "$FT_OFFICE" == "true" ] ; then
-  writelog "Config stage: install office"
   OFFICE_MYSQL_HOST="localhost"
   OFFICE_MYSQL_USER="groffice"
   OFFICE_MYSQL_PASS=$(randpw)
@@ -413,7 +386,6 @@ if [ "$FT_OFFICE" == "true" ] ; then
 fi
 
 if [ "$FT_ARCHIVE" == "true" ] ; then
-  writelog "Config stage: install archive"
 
   ARCHIVE_MYSQL_HOST="localhost"
   ARCHIVE_MYSQL_USER="groarchive"
@@ -457,7 +429,6 @@ if [ "$FT_ARCHIVE" == "true" ] ; then
 
   < /dev/urandom head -c 56 > /etc/grommunio-archive/grommunio-archive.key
 
-  writelog "Config stage: archive+postfix enable and restart"
   systemctl enable searchd.service grommunio-archive-smtp.service grommunio-archive.service postfix.service >>"${LOGFILE}" 2>&1
   systemctl restart searchd.service grommunio-archive-smtp.service grommunio-archive.service postfix.service >>"${LOGFILE}" 2>&1
 
@@ -468,8 +439,6 @@ fi
 mv /tmp/config.json /etc/grommunio-admin-common/config.json
 systemctl restart grommunio-admin-api.service
 
-progress 100
-writelog "Config stage: completed"
 setup_done
 
 exit 0
