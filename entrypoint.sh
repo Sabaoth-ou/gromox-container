@@ -124,8 +124,6 @@ RETCMD=1
 if [ "${SSL_INSTALL_TYPE}" = "0" ]; then
   clear
   if ! selfcert; then
-    dialog --no-mouse --clear --colors --backtitle "grommunio Setup" --title "TLS certificate (self-signed)" --msgbox "Certificate generation not successful. See ${LOGFILE}.\nContinue installation or press ESC to abort setup." 0 0
-    dialog_exit $?
   fi
 elif [ "${SSL_INSTALL_TYPE}" = "2" ]; then
   choose_ssl_selfprovided
@@ -135,7 +133,7 @@ elif [ "${SSL_INSTALL_TYPE}" = "2" ]; then
   while [ ${RETCMD} -ne 0 ]; do
     owncert
     RETCMD=$?
-  don
+  done
 elif [ "${SSL_INSTALL_TYPE}" = "3" ]; then
   choose_ssl_letsencrypt
   #this should containe the domain to signed by certbot
