@@ -122,7 +122,9 @@ SSL_PASS=$(randpw)
 RETCMD=1
 if [ "${SSL_INSTALL_TYPE}" = "0" ]; then
   clear
-  if ! selfcert;
+  if ! selfcert; then
+    selfcert
+  fi
 elif [ "${SSL_INSTALL_TYPE}" = "2" ]; then
   choose_ssl_selfprovided
   fullca
