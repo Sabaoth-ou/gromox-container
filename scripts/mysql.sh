@@ -12,5 +12,3 @@ ADMIN_PASS=grommunio
     else
       failonme 1
     fi
-  done
-fi
