@@ -73,7 +73,7 @@ unset REPO_PATH
 REPO_USER="your_repo_user"
 REPO_PASS="your_repo_password"
 # shellcheck source=common/repo
-INSTALLVALUE="core, chat, files, office, archive, meet"
+INSTALLVALUE="core, chat, files, office, archive"
 PACKAGES="gromox grommunio-admin-api grommunio-admin-web grommunio-antispam \
   grommunio-common grommunio-web grommunio-sync grommunio-dav \
   mariadb php-fpm cyrus-sasl-saslauthd cyrus-sasl-plain postfix jq"
@@ -163,7 +163,7 @@ if [[ $INSTALLVALUE == *"chat"* ]] ; then
   CHAT_MYSQL_PASS=grommunio
   CHAT_MYSQL_DB="grochat"
   CHAT_CONFIG="/etc/grommunio-chat/config.json"
-  set_chat_mysql_param
+
   if [ "${CHAT_MYSQL_HOST}" == "localhost" ] ; then
     echo "drop database if exists ${CHAT_MYSQL_DB}; \
           create database ${CHAT_MYSQL_DB}; \
@@ -204,16 +204,6 @@ cp /home/config/chat.yaml /etc/grommunio-admin-api/conf.d/chat.yaml
 
   chmod 640 ${CHAT_CONFIG}
   jq '.chatWebAddress |= "https://'${FQDN}'/chat"' /tmp/config.json > /tmp/config-new.json
-  mv /tmp/config-new.json /tmp/config.json
-
-fi
-
-if [[ $INSTALLVALUE == *"meet"* ]] ; then
-  writelog "Config feature meet: Starting to setup meet."
-
-  . "${DATADIR}/parts/grommunio-meet.sh"
-
-  jq '.videoWebAddress |= "https://'${FQDN}'/meet"' /tmp/config.json > /tmp/config-new.json
   mv /tmp/config-new.json /tmp/config.json
 
 fi
