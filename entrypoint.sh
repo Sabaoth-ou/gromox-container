@@ -73,7 +73,7 @@ unset REPO_PATH
 REPO_USER="your_repo_user"
 REPO_PASS="your_repo_password"
 # shellcheck source=common/repo
-INSTALL-VALUE= "core, office, archive, meet"
+INSTALLVALUE="core, chat, files, office, archive, meet"
 PACKAGES="gromox grommunio-admin-api grommunio-admin-web grommunio-antispam \
   grommunio-common grommunio-web grommunio-sync grommunio-dav \
   mariadb php-fpm cyrus-sasl-saslauthd cyrus-sasl-plain postfix jq"
@@ -156,12 +156,11 @@ EOF
 
 echo "{ \"mailWebAddress\": \"https://${FQDN}/web\", \"rspamdWebAddress\": \"https://${FQDN}:8443/antispam/\" }" | jq > /tmp/config.json
 
-if [ "$FT_CHAT" == "true" ] ; then
-
+if [[ $INSTALLVALUE == *"chat"* ]] ; then
   systemctl stop grommunio-chat
   CHAT_MYSQL_HOST="localhost"
   CHAT_MYSQL_USER="grochat"
-  CHAT_MYSQL_PASS=$(randpw)
+  CHAT_MYSQL_PASS=grommunio
   CHAT_MYSQL_DB="grochat"
   CHAT_CONFIG="/etc/grommunio-chat/config.json"
   set_chat_mysql_param
@@ -209,7 +208,7 @@ cp /home/config/chat.yaml /etc/grommunio-admin-api/conf.d/chat.yaml
 
 fi
 
-if [ "$FT_MEET" == "true" ] ; then
+if [[ $INSTALLVALUE == *"meet"* ]] ; then
   writelog "Config feature meet: Starting to setup meet."
 
   . "${DATADIR}/parts/grommunio-meet.sh"
@@ -221,7 +220,6 @@ fi
 
 zypper install -y mariadb vim php-fpm cyrus-sasl-saslauthd cyrus-sasl-plain postfix postfix-mysql >>"${LOGFILE}" 2>&1
 
-progress 10
 systemctl enable redis@grommunio.service gromox-delivery.service gromox-event.service \
   gromox-http.service gromox-imap.service gromox-midb.service gromox-pop3.service \
   gromox-delivery-queue.service gromox-timer.service gromox-zcore.service grommunio-antispam.service \
@@ -249,8 +247,11 @@ setconf /etc/gromox/smtp.cfg listen_port 24
 cp /etc/pam.d/smtp /etc/pam.d/smtp.save
 cp /home/config/smtp /etc/pam.d/smtp
 
-echo "create database grommunio; grant all on grommunio.* to 'grommunio'@'localhost' identified by '${MYSQL_PASS}';" | mysql
+echo "create database grommunio; grant all on grommunio.* to 'grommunio'@'localhost' identified by 'grommunio';" | mysql
 echo "# Do not delete this file unless you know what you do!" > /etc/grommunio-common/setup_done
+
+chmod +x /home/scripts/mysql.sh
+. /home/scripts/mysql.sh
 
 setconf /etc/gromox/mysql_adaptor.cfg mysql_username "${MYSQL_USER}"
 setconf /etc/gromox/mysql_adaptor.cfg mysql_password "${MYSQL_PASS}"
@@ -260,6 +261,7 @@ setconf /etc/gromox/mysql_adaptor.cfg schema_upgrade "host:${FQDN}"
 fi
 
 cp -f /etc/gromox/mysql_adaptor.cfg /etc/gromox/adaptor.cfg >>"${LOGFILE}" 2>&1
+
 
 cp /home/config/autodiscover.ini /etc/gromox/autodiscover.ini 
 gromox-dbop -C >>"${LOGFILE}" 2>&1
@@ -315,11 +317,11 @@ systemctl restart redis@grommunio.service nginx.service php-fpm.service gromox-d
   gromox-pop3.service gromox-delivery-queue.service gromox-timer.service gromox-zcore.service \
   grommunio-admin-api.service saslauthd.service grommunio-antispam.service >>"${LOGFILE}" 2>&1
 
-if [ "$FT_FILES" == "true" ] ; then
+if [[ $INSTALLVALUE == *"files"* ]] ; then
 
   FILES_MYSQL_HOST="localhost"
   FILES_MYSQL_USER="grofiles"
-  FILES_MYSQL_PASS=$(randpw)
+  FILES_MYSQL_PASS=grommunio
   FILES_MYSQL_DB="grofiles"
   set_files_mysql_param
   if [ "${FILES_MYSQL_HOST}" == "localhost" ] ; then
@@ -345,10 +347,10 @@ sh /home/scripts/pushd.sh
 
 fi
 
-if [ "$FT_OFFICE" == "true" ] ; then
+if [[ $INSTALLVALUE == *"office"* ]] ; then
   OFFICE_MYSQL_HOST="localhost"
   OFFICE_MYSQL_USER="groffice"
-  OFFICE_MYSQL_PASS=$(randpw)
+  OFFICE_MYSQL_PASS=grommunio
   OFFICE_MYSQL_DB="groffice"
   set_office_mysql_param
   if [ "${OFFICE_MYSQL_HOST}" == "localhost" ] ; then
@@ -385,11 +387,11 @@ if [ "$FT_OFFICE" == "true" ] ; then
   popd || return
 fi
 
-if [ "$FT_ARCHIVE" == "true" ] ; then
+if [[ $INSTALLVALUE == *"archive"* ]] ; then
 
   ARCHIVE_MYSQL_HOST="localhost"
   ARCHIVE_MYSQL_USER="groarchive"
-  ARCHIVE_MYSQL_PASS=$(randpw)
+  ARCHIVE_MYSQL_PASS=grommunio
   ARCHIVE_MYSQL_DB="groarchive"
   set_archive_mysql_param
   if [ "${ARCHIVE_MYSQL_HOST}" == "localhost" ] ; then
