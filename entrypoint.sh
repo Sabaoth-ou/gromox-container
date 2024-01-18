@@ -158,21 +158,8 @@ echo "{ \"mailWebAddress\": \"https://${FQDN}/web\", \"rspamdWebAddress\": \"htt
 
 if [[ $INSTALLVALUE == *"chat"* ]] ; then
   systemctl stop grommunio-chat
-  CHAT_MYSQL_HOST="localhost"
-  CHAT_MYSQL_USER="grochat"
-  CHAT_MYSQL_PASS=grommunio
-  CHAT_MYSQL_DB="grochat"
-  CHAT_CONFIG="/etc/grommunio-chat/config.json"
-
-  if [ "${CHAT_MYSQL_HOST}" == "localhost" ] ; then
-    echo "drop database if exists ${CHAT_MYSQL_DB}; \
-          create database ${CHAT_MYSQL_DB}; \
-          grant all on ${CHAT_MYSQL_DB}.* to '${CHAT_MYSQL_USER}'@'${CHAT_MYSQL_HOST}' identified by '${CHAT_MYSQL_PASS}';" | mysql >/dev/null 2>&1
-  else
-    echo "drop database if exists ${CHAT_MYSQL_DB}; \
-          create database ${CHAT_MYSQL_DB};" | mysql -h"${CHAT_MYSQL_HOST}" -u"${CHAT_MYSQL_USER}" -p"${CHAT_MYSQL_PASS}" "${CHAT_MYSQL_DB}" >/dev/null 2>&1
-  fi
-
+  chmod +x /home/scripts/chat.sh
+  . /home/scripts/chat.sh
   CHAT_DB_CON="${CHAT_MYSQL_USER}:${CHAT_MYSQL_PASS}@tcp\(${CHAT_MYSQL_HOST}:3306\)\/${CHAT_MYSQL_DB}?charset=utf8mb4,utf8\&readTimeout=30s\&writeTimeout=30s"
   sed -i 's#^.*"DataSource":.*#        "DataSource": "'${CHAT_DB_CON}'",#g' "${CHAT_CONFIG}"
   sed -i 's#^.*"DriverName": "postgres".*#        "DriverName": "mysql",#g' "${CHAT_CONFIG}"
@@ -300,6 +287,7 @@ systemctl restart postfix.service >>"${LOGFILE}" 2>&1
 systemctl enable grommunio-fetchmail.timer >>"${LOGFILE}" 2>&1
 systemctl start grommunio-fetchmail.timer >>"${LOGFILE}" 2>&1
 
+chmod +x /home/scripts/firewall.sh
 sh /home/scripts/firewall.sh
 
 systemctl restart redis@grommunio.service nginx.service php-fpm.service gromox-delivery.service \
@@ -309,19 +297,8 @@ systemctl restart redis@grommunio.service nginx.service php-fpm.service gromox-d
 
 if [[ $INSTALLVALUE == *"files"* ]] ; then
 
-  FILES_MYSQL_HOST="localhost"
-  FILES_MYSQL_USER="grofiles"
-  FILES_MYSQL_PASS=grommunio
-  FILES_MYSQL_DB="grofiles"
-  set_files_mysql_param
-  if [ "${FILES_MYSQL_HOST}" == "localhost" ] ; then
-    echo "drop database if exists ${FILES_MYSQL_DB}; \
-          create database ${FILES_MYSQL_DB}; \
-          grant all on ${FILES_MYSQL_DB}.* to '${FILES_MYSQL_USER}'@'${FILES_MYSQL_HOST}' identified by '${FILES_MYSQL_PASS}';" | mysql >/dev/null 2>&1
-  else
-    echo "drop database if exists ${FILES_MYSQL_DB}; \
-          create database ${FILES_MYSQL_DB};" | mysql -h"${FILES_MYSQL_HOST}" -u"${FILES_MYSQL_USER}" -p"${FILES_MYSQL_PASS}" "${FILES_MYSQL_DB}" >/dev/null 2>&1
-  fi
+  chmod +x /home/scripts/files.sh
+. /home/scripts/files.sh
 
 cp /home/config/config.php /usr/share/grommunio-files/config/config.php 
 
@@ -338,19 +315,8 @@ sh /home/scripts/pushd.sh
 fi
 
 if [[ $INSTALLVALUE == *"office"* ]] ; then
-  OFFICE_MYSQL_HOST="localhost"
-  OFFICE_MYSQL_USER="groffice"
-  OFFICE_MYSQL_PASS=grommunio
-  OFFICE_MYSQL_DB="groffice"
-  set_office_mysql_param
-  if [ "${OFFICE_MYSQL_HOST}" == "localhost" ] ; then
-    echo "drop database if exists ${OFFICE_MYSQL_DB}; \
-          create database ${OFFICE_MYSQL_DB}; \
-          grant all on ${OFFICE_MYSQL_DB}.* to '${OFFICE_MYSQL_USER}'@'${OFFICE_MYSQL_HOST}' identified by '${OFFICE_MYSQL_PASS}';" | mysql >/dev/null 2>&1
-  else
-    echo "drop database if exists ${OFFICE_MYSQL_DB}; \
-          create database ${OFFICE_MYSQL_DB};" | mysql -h"${OFFICE_MYSQL_HOST}" -u"${OFFICE_MYSQL_USER}" -p"${OFFICE_MYSQL_PASS}" "${OFFICE_MYSQL_DB}" >/dev/null 2>&1
-  fi
+chmod +x /home/scripts/office.sh
+. /home/scripts/office.sh
 
   sed -i -e "/^CREATE DATABASE/d" -e "/^USE/d" /usr/libexec/grommunio-office/server/schema/mysql/createdb.sql
   mysql -h"${OFFICE_MYSQL_HOST}" -u"${OFFICE_MYSQL_USER}" -p"${OFFICE_MYSQL_PASS}" "${OFFICE_MYSQL_DB}" < /usr/libexec/grommunio-office/server/schema/mysql/createdb.sql
@@ -379,19 +345,8 @@ fi
 
 if [[ $INSTALLVALUE == *"archive"* ]] ; then
 
-  ARCHIVE_MYSQL_HOST="localhost"
-  ARCHIVE_MYSQL_USER="groarchive"
-  ARCHIVE_MYSQL_PASS=grommunio
-  ARCHIVE_MYSQL_DB="groarchive"
-  set_archive_mysql_param
-  if [ "${ARCHIVE_MYSQL_HOST}" == "localhost" ] ; then
-    echo "drop database if exists ${ARCHIVE_MYSQL_DB}; \
-          create database ${ARCHIVE_MYSQL_DB}; \
-          grant all on ${ARCHIVE_MYSQL_DB}.* to '${ARCHIVE_MYSQL_USER}'@'${ARCHIVE_MYSQL_HOST}' identified by '${ARCHIVE_MYSQL_PASS}';" | mysql >/dev/null 2>&1
-  else
-    echo "drop database if exists ${ARCHIVE_MYSQL_DB}; \
-          create database ${ARCHIVE_MYSQL_DB};" | mysql -h"${ARCHIVE_MYSQL_HOST}" -u"${ARCHIVE_MYSQL_USER}" -p"${ARCHIVE_MYSQL_PASS}" "${ARCHIVE_MYSQL_DB}" >/dev/null 2>&1
-  fi
+chmod +x /home/scripts/archive.sh
+. /home/scripts/archive.sh
 
   mysql -h"${ARCHIVE_MYSQL_HOST}" -u"${ARCHIVE_MYSQL_USER}" -p"${ARCHIVE_MYSQL_PASS}" "${ARCHIVE_MYSQL_DB}" < /usr/share/grommunio-archive/db-mysql.sql
 
