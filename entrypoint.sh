@@ -172,7 +172,7 @@ if [[ $INSTALLVALUE == *"chat"* ]] ; then
   chmod 644 ${CHAT_CONFIG}
   systemctl enable grommunio-chat
   systemctl restart grommunio-chat
-  dialog_chat_adminpass
+
   # wait for the grommunio-chat unix socket, sometimes a second restart required for bind (db population)
   if ! [ -e "/var/tmp/grommunio-chat_local.socket" ] ; then
     systemctl restart grommunio-chat
