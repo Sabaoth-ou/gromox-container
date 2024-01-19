@@ -16,6 +16,8 @@ if ! test -e "$LOGFILE"; then
 	true >"$LOGFILE"
 	chmod 0600 "$LOGFILE"
 fi
+# shellcheck source=common/helpers
+. "${DATADIR}/common/helpers"
 # shellcheck source=common/dialogs
 . "${DATADIR}/common/install-option"
 TMPF=$(mktemp /tmp/grommunio-setup.XXXXXXXX)
@@ -228,7 +230,7 @@ echo "create database grommunio; grant all on grommunio.* to 'grommunio'@'localh
 echo "# Do not delete this file unless you know what you do!" > /etc/grommunio-common/setup_done
 
 chmod +x /home/scripts/mysql.sh
-. /home/scripts/mysql.sh
+sh /home/scripts/mysql.sh
 
 setconf /etc/gromox/mysql_adaptor.cfg mysql_username "${MYSQL_USER}"
 setconf /etc/gromox/mysql_adaptor.cfg mysql_password "${MYSQL_PASS}"
@@ -298,7 +300,7 @@ systemctl restart redis@grommunio.service nginx.service php-fpm.service gromox-d
 if [[ $INSTALLVALUE == *"files"* ]] ; then
 
   chmod +x /home/scripts/files.sh
-. /home/scripts/files.sh
+sh /home/scripts/files.sh
 
 cp /home/config/config.php /usr/share/grommunio-files/config/config.php 
 
@@ -316,7 +318,7 @@ fi
 
 if [[ $INSTALLVALUE == *"office"* ]] ; then
 chmod +x /home/scripts/office.sh
-. /home/scripts/office.sh
+sh /home/scripts/office.sh
 
   sed -i -e "/^CREATE DATABASE/d" -e "/^USE/d" /usr/libexec/grommunio-office/server/schema/mysql/createdb.sql
   mysql -h"${OFFICE_MYSQL_HOST}" -u"${OFFICE_MYSQL_USER}" -p"${OFFICE_MYSQL_PASS}" "${OFFICE_MYSQL_DB}" < /usr/libexec/grommunio-office/server/schema/mysql/createdb.sql
