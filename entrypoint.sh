@@ -232,9 +232,11 @@ echo "# Do not delete this file unless you know what you do!" > /etc/grommunio-c
 chmod +x /home/scripts/mysql.sh
 sh /home/scripts/mysql.sh
 
+cp -f /home/config/mysql_adaptor.cfg /etc/gromox/mysql_adaptor.cfg
 setconf /etc/gromox/mysql_adaptor.cfg mysql_username "${MYSQL_USER}"
 setconf /etc/gromox/mysql_adaptor.cfg mysql_password "${MYSQL_PASS}"
 setconf /etc/gromox/mysql_adaptor.cfg mysql_dbname "${MYSQL_DB}"
+MYSQL_INSTALL_TYPE=1
 if [ "$MYSQL_INSTALL_TYPE" = 1 ]; then
 setconf /etc/gromox/mysql_adaptor.cfg schema_upgrade "host:${FQDN}"
 fi
