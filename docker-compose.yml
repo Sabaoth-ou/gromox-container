@@ -29,6 +29,11 @@ services:
       - SYS_RESOURCE
     volumes:
       - opensuse-data:/data
+      - ./opensuse-data/var /var
+      - ./opensuse-data/home /home
+      - ./opensuse-data/usr /usr
+      - ./opensuse-data/etc /etc
+      - ./opensuse-data/opt /opt
     networks:
       mynet:
         ipv4_address: 17.18.0.3
