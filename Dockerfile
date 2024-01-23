@@ -54,9 +54,11 @@ COPY scripts /home/scripts
 COPY common /home/common
 COPY config /home/config
 COPY entrypoint.sh /home/entrypoint.sh
-RUN chmod +x /home/entrypoint.sh
+RUN echo '#!/bin/bash' > /home/entrypoint.sh && \
+    echo 'exec "$@"' >> /home/entrypoint.sh && \
+    chmod +x /home/entrypoint.sh
 # Make use of stopsignal (instead of sigterm) to stop systemd containers.
 
 
 # Set systemd as entrypoint.
-ENTRYPOINT [ "/usr/lib/systemd/systemd", "/home/entrypoint.sh", "--log-level=err" ]
+ENTRYPOINT ["/usr/lib/systemd/systemd", "--log-level=debug", "--system"]
