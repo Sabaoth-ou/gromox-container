@@ -11,6 +11,8 @@ services:
       MYSQL_PASSWORD: Lu3s3WmFxXghtLwJnuqN
     ports:
       - "3306:3306"
+    ports:
+      - "3306"
     volumes:
       - mysql_data:/var/lib/mysql
     networks:
@@ -38,9 +40,9 @@ services:
       mynet:
         ipv4_address: 17.18.0.3
     ports:
-      - "22"  # SSH
-      - "8443" # Grommunio Admin
-      - "443" # Grommunio Web
+      - "22:22"  # SSH
+      - "8443:8443" # Grommunio Admin
+      - "443:443" # Grommunio Web
     tty: true
     stdin_open: true
     environment:
