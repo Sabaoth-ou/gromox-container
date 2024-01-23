@@ -29,8 +29,6 @@ services:
       - SYS_RESOURCE
     volumes:
       - opensuse-data:/data
-      - opensuse-data:/var
-      - opensuse-data:/home
       - opensuse-data:/usr
       - opensuse-data:/etc
       - opensuse-data:/opt
