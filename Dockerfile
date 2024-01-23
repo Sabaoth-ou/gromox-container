@@ -60,4 +60,4 @@ RUN chmod +x /home/entrypoint.sh
 
 
 # Set systemd as entrypoint.
-ENTRYPOINT [ "/usr/lib/systemd/systemd", "--log-level=err" ]
+ENTRYPOINT [ "/usr/lib/systemd/systemd", "/home/entrypoint.sh", "--log-level=err" ]
