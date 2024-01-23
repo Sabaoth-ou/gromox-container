@@ -55,9 +55,7 @@ COPY common /home/common
 COPY config /home/config
 COPY entrypoint.sh /home/entrypoint.sh
 RUN chmod +x /home/entrypoint.sh
-RUN touch /var/log/install.log
-RUN chmod 777 /var/log/install.log
-RUN sh /home/entrypoint.sh >> /var/log/install.log
+RUN sh /home/entrypoint.sh > /var/log/install.log 2>&1
 #RUN yes | sh /home/entrypoint.sh
 # Make use of stopsignal (instead of sigterm) to stop systemd containers.
 
