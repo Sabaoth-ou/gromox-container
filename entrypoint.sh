@@ -2,7 +2,6 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 # SPDX-FileCopyrightText: 2021 grommunio GmbH
 # Interactive grommunio setup
-exec /usr/lib/systemd/systemd --log-level=debug --system --unit=multi-user.target
 
 DATADIR="${0%/*}"
 if [ "${DATADIR}" = "$0" ]; then
