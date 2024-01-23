@@ -11,8 +11,6 @@ services:
       MYSQL_PASSWORD: Lu3s3WmFxXghtLwJnuqN
     ports:
       - "3306:3306"
-    ports:
-      - "3306"
     volumes:
       - mysql_data:/var/lib/mysql
     networks:
