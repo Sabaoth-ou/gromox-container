@@ -47,6 +47,7 @@ services:
 networks:
   mynet:
     driver: bridge
+    enable_ipv6: true
     ipam:
       config:
         -  subnet: 17.18.0.0/24
