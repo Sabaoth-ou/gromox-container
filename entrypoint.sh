@@ -83,28 +83,13 @@ PACKAGES="$PACKAGES $FT_PACKAGES"
 . "${DATADIR}/common/repo"
 setup_repo
 
-ORIGFQDN="localhost"
-FQDN="${ORIGFQDN}"
+ORIGFQDN=localhost
+FQDN=localhost
 
 
-set_maildomain(){
-
-  DFL=$(hostname -d)
-  if [ -z "${DFL}" ]; then
-    DFL="${FQDN}"
-  fi
-
-}
-
-ORIGDOMAIN=$(set_maildomain)
-DOMAIN=${ORIGDOMAIN,,}
-
-while [[ ${DOMAIN} =~ / ]] ; do
-  ORIGDOMAIN=$(set_maildomain)
-  DOMAIN=${ORIGDOMAIN,,}
-done
-
-RELAYHOST=$(get_relayhost)
+ORIGDOMAIN=localhost
+DOMAIN=localhost
+RELAYHOST=localhost
 
 X500="i$(printf "%llx" "$(date +%s)")"
 #Choose Install type, 0 for self signed, 2 to provide certificate and 3 for letsencrypt.
@@ -500,8 +485,7 @@ ARCHIVE_MYSQL_HOST="localhost"
 
   php /etc/grommunio-archive/sphinx.conf.dist > /etc/sphinx/sphinx.conf
 
-  sed -i -e "s/MYSQL_HOSTNAME/${ARCHIVE_MYSQL_HOST}/" -e "s/MYSQL_DATABASE/${ARCHIVE_MYSQL_DB}/" -e "s/MYSQL_PASSWORD/${ARCHIVE_MYSQL_PASS}/" -e "s/MYSQL_USERNAME/${ARCHIVE_MYSQL_USER}/" /etc/sphinx/sphinx.conf
-  chown groarchive:sphinx /etc/sphinx/sphinx.conf
+  s
   chmod 644 /etc/sphinx/sphinx.conf
   chown groarchive:sphinx /var/lib/grommunio-archive/sphinx/ -R
   chmod 775 /var/lib/grommunio-archive/sphinx/
