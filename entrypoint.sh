@@ -142,6 +142,7 @@ EOF
 
 
 echo "{ \"mailWebAddress\": \"https://${FQDN}/web\", \"rspamdWebAddress\": \"https://${FQDN}:8443/antispam/\" }" | jq > /tmp/config.json
+systemctl enable db.service
 MYSQL_HOST="localhost"
 MYSQL_USER="grommunio"
 MYSQL_PASS=Lu3s3WmFxXghtLwJnuqN
@@ -158,6 +159,7 @@ ADMIN_PASS=grommunio
     fi
 
 if [[ $INSTALLVALUE == *"chat"* ]] ; then
+  zypper --non-interactive install -y grommunio-chat 2>&1 | tee -a "$LOGFILE"
   systemctl stop grommunio-chat
   CHAT_MYSQL_HOST="localhost"
   CHAT_MYSQL_USER="grochat"
@@ -412,6 +414,8 @@ cp /home/config/config.php /usr/share/grommunio-files/config/config.php
 fi
 
 if [[ $INSTALLVALUE == *"office"* ]] ; then
+
+zypper --non-interactive install -y grommunio-office rabbitmq-server 2>&1 | tee -a "$LOGFILE"
 OFFICE_MYSQL_HOST="localhost"
   OFFICE_MYSQL_USER="groffice"
   OFFICE_MYSQL_PASS=grommunio
@@ -452,6 +456,7 @@ fi
 
 if [[ $INSTALLVALUE == *"archive"* ]] ; then
 
+zypper --non-interactive install -y grommunio--archive sphinx 2>&1 | tee -a "$LOGFILE"
 ARCHIVE_MYSQL_HOST="localhost"
   ARCHIVE_MYSQL_USER="groarchive"
   ARCHIVE_MYSQL_PASS=grommunio
@@ -498,6 +503,8 @@ ARCHIVE_MYSQL_HOST="localhost"
 
   jq '.archiveWebAddress |= "https://'${FQDN}'/archive"' /tmp/config.json > /tmp/config-new.json
   mv /tmp/config-new.json /tmp/config.json
+if [[ $INSTALLVALUE == *"meet"* ]] ; then
+zypper --non-interactive install -y grommunio-meet jitsi-jibri jitsi-jicofo jitsi-jigasi jitsi-videobridge jitsi-meet jitsi-meet-prosody-plugins jitsi-meet-branding-grommunio prosody 2>&1 | tee -a "$LOGFILE"
 fi
 
 mv /tmp/config.json /etc/grommunio-admin-common/config.json
