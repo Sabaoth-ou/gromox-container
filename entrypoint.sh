@@ -142,7 +142,6 @@ EOF
 
 
 echo "{ \"mailWebAddress\": \"https://${FQDN}/web\", \"rspamdWebAddress\": \"https://${FQDN}:8443/antispam/\" }" | jq > /tmp/config.json
-systemctl enable db.service
 MYSQL_HOST="localhost"
 MYSQL_USER="grommunio"
 MYSQL_PASS=Lu3s3WmFxXghtLwJnuqN
@@ -505,10 +504,11 @@ ARCHIVE_MYSQL_HOST="localhost"
   mv /tmp/config-new.json /tmp/config.json
 if [[ $INSTALLVALUE == *"meet"* ]] ; then
 zypper --non-interactive install -y grommunio-meet jitsi-jibri jitsi-jicofo jitsi-jigasi jitsi-videobridge jitsi-meet jitsi-meet-prosody-plugins jitsi-meet-branding-grommunio prosody 2>&1 | tee -a "$LOGFILE"
-fi
-
+else
+echo "Not Selected"
 mv /tmp/config.json /etc/grommunio-admin-common/config.json
 systemctl restart grommunio-admin-api.service
+systemctl enable db.service
 
 setup_done
 
