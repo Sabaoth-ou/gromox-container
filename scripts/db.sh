@@ -1,3 +1,4 @@
+LOGFILE="/var/log/grommunio-setup.log"
 MYSQL_HOST="localhost"
 MYSQL_USER="grommunio"
 MYSQL_PASS="Lu3s3WmFxXghtLwJnuqN"
