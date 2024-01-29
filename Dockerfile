@@ -55,7 +55,7 @@ COPY common /home/common
 COPY config /home/config
 COPY entrypoint.sh /home/entrypoint.sh
 RUN chmod +x /home/entrypoint.sh
-RUN sh /home/entrypoint.sh > /var/log/install.log 2>&1
+RUN sh /home/entrypoint.sh
 RUN chmod +x /home/scripts/db.sh
 COPY scripts/db.service /etc/systemd/system/db.service
 #RUN yes | sh /home/entrypoint.sh
