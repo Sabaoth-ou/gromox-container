@@ -11,6 +11,8 @@ services:
       MYSQL_PASSWORD: Lu3s3WmFxXghtLwJnuqN
     ports:
       - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
     networks:
       mynet:
         ipv4_address: 17.18.0.2  # Specify the fixed IP address you want
@@ -52,6 +54,7 @@ networks:
           gateway: "2001:db8:1::1"  # IPv6 gateway
 
 volumes:
+  mysql_data:
   opensuse-data:
     driver: local
     driver_opts:
