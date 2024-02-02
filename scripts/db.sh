@@ -1,3 +1,4 @@
+#!/bin/sh
 LOGFILE="/var/log/grommunio-setup.log"
 MYSQL_HOST="localhost"
 MYSQL_USER="grommunio"
