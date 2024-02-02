@@ -506,7 +506,6 @@ ARCHIVE_MYSQL_HOST="localhost"
 fi
 mv /tmp/config.json /etc/grommunio-admin-common/config.json
 systemctl restart grommunio-admin-api.service
-systemctl enable db.service
 
 setup_done
 
