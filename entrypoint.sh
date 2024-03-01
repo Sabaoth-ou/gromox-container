@@ -289,7 +289,7 @@ done
 for CFG in midb.cfg zcore.cfg exmdb_local.cfg exmdb_provider.cfg exchange_emsmdb.cfg exchange_nsp.cfg ; do
   setconf "/etc/gromox/${CFG}" x500_org_name "${X500}"
 done
-
+cp /home/config/gromox.cfg /etc/gromox/gromox.cfg
 cp /home/config/mailbox/virtual-mailbox-domain.cf /etc/postfix/grommunio-virtual-mailbox-domains.cf 
 
 cp /home/config/mailbox/virtual-mailbox-alias-maps.cf /etc/postfix/grommunio-virtual-mailbox-alias-maps.cf 
@@ -505,8 +505,10 @@ ARCHIVE_MYSQL_HOST="localhost"
 
 fi
 mv /tmp/config.json /etc/grommunio-admin-common/config.json
+cp conf/n
 systemctl restart grommunio-admin-api.service
 systmectl enable db.service
+systemctl restart 
 setup_done
 
 exit 0
